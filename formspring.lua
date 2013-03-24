@@ -150,10 +150,12 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
   if username and item_type then
     -- ajax pagination of responses, smiles, questions
     local data = load_json_file(file)
-    discover_formspring_urls(urls, usernames, username, data["questions"])
+    if data and data["questions"] then
+      discover_formspring_urls(urls, usernames, username, data["questions"])
+    end
 
     -- another page?
-    if data["count"] >= 20 then
+    if data and data["count"] >= 20 then
       -- find final question ID
       local last_question_id = nil
       for question_id in string.gmatch(data["questions"], "<li class=\"question[^>]+rel=\"([0-9]+)\"") do
@@ -224,10 +226,12 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
   if username and item_type then
     -- ajax pagination
     local data = load_json_file(file)
-    discover_formspring_urls(urls, usernames, username, data["content"])
+    if data and data["content"] then
+      discover_formspring_urls(urls, usernames, username, data["content"])
+    end
 
     -- another page?
-    if data["next"] then
+    if data and data["next"] then
       table.insert(urls, { url=("http://www.formspring.me/profile/morePeople/"..username.."/"..item_type.."?ajax=1&start="..data["next"].."&limit=15") })
     end
   end
