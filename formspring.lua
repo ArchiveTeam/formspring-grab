@@ -45,6 +45,8 @@ do
 end
 
 
+local username_count = 0
+
 local write_usernames = function(usernames)
   local filename = os.getenv("USER_DATA_FILENAME")
   if filename then
@@ -55,7 +57,7 @@ local write_usernames = function(usernames)
       n = n + 1
     end
     f:close()
-    io.stdout:write("\r - Usernames found: "..n.."\n")
+    username_count = n
   end
 end
 
@@ -112,7 +114,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
   -- progress message
   url_count = url_count + 1
   if url_count % 10 == 0 then
-    io.stdout:write("\r - Downloaded "..url_count.." URLs")
+    io.stdout:write("\r - Downloaded "..url_count.." URLs, found "..username_count.." usernames")
     io.stdout:flush()
   end
 
