@@ -46,27 +46,34 @@ end
 
 
 local write_usernames = function(usernames)
-  print("Writing usernames...")
   local filename = os.getenv("USER_DATA_FILENAME")
   if filename then
+    local n = 0
     local f = io.open(filename, "w")
     for username, v in pairs(usernames) do
       f:write(username.."\n")
+      n = n + 1
     end
     f:close()
+    io.stdout:write("\r - Usernames found: "..n.."\n")
   end
 end
 
 local discover_formspring_urls = function(urls, usernames, username, html)
-  local escaped_username = escape_lua_pattern(username)
+  if not html then
+    return
+  end
 
-  -- questions for this user (guess)
-  for url in string.gmatch(html, "href=\"(http://www%.formspring%.me/"..escaped_username.."/q/[0-9]+)\"") do
-    table.insert(urls, { url=(url), link_expect_html=1 })
+  if username then
+    local escaped_username = escape_lua_pattern(username)
+    -- questions for this user (guess)
+    for url in string.gmatch(html, "href=\"(http://www%.formspring%.me/"..escaped_username.."/q/[0-9]+)\"") do
+      table.insert(urls, { url=(url), link_expect_html=1 })
+    end
   end
 
   -- general questions answered by this user (guess)
-  for url in string.gmatch(html, "href=\"(http://www%.formspring%.me/r/[^/]+/[0-9]+)\"") do
+  for url in string.gmatch(html, "href=\"(http://www%.formspring%.me/r/[^/]+/[0-9]+)") do
     table.insert(urls, { url=(url), link_expect_html=1 })
     table.insert(urls, { url=(url.."?switch=hidden"), link_expect_html=1 })
     table.insert(urls, { url=(url.."/top"), link_expect_html=1 })
@@ -86,9 +93,9 @@ local discover_formspring_urls = function(urls, usernames, username, html)
 
   -- user link with hovercard
   local found_new_username = false
-  for new_username in string.gmatch(html, "<a href=\"http://www%.formspring%.me/([^/]+)\" class=\"[^\"]*hovercard") do
-    if not usernames[username] then
-      usernames[username] = true
+  for new_username in string.gmatch(html, "<a href=\"http://www%.formspring%.me/([a-zA-Z0-9]+)\" class=\"[^\"]*hovercard") do
+    if not usernames[new_username] then
+      usernames[new_username] = true
       found_new_username = true
     end
   end
@@ -117,6 +124,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     local html = read_file(file)
 
     -- user profile
+    table.insert(urls, { url=("http://formspring.me/"..username), link_expect_html=1 })
     table.insert(urls, { url=("http://www.formspring.me/profile/hovercard/"..username.."?ajax=1") })
 
     -- questions, smiles, pictures, following, followers
@@ -171,10 +179,10 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
   end
 
   -- PUBLIC QUESTION
-  local base_url, username = string.match(url, "^(http://www%.formspring%.me/r/([^/]+)/[0-9]+)")
+  local base_url = string.match(url, "^(http://www%.formspring%.me/r/[^/]+/[0-9]+)")
   if base_url then
     local html = read_file(file)
-    discover_formspring_urls(urls, usernames, username, html)
+    discover_formspring_urls(urls, usernames, nil, html)
 
     -- find final response ID
     local last_response_id = nil
@@ -189,7 +197,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
   end
 
   -- USER QUESTION
-  local username = string.match(url, "^http://www%.formspring%.me/([^/]+)/q/[0-9]+")
+  local username = string.match(url, "^http://www%.formspring%.me/([a-zA-Z0-9]+)/q/[0-9]+")
   if username then
     local html = read_file(file)
     discover_formspring_urls(urls, usernames, username, html)
@@ -258,7 +266,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     -- users
     local last_result_id = nil
     if data and data["_output"] then
-      for result_id, user in string.gmatch(data["_output"], "<li[^>]+id=\"([0-9]+)\">[^<]+<div class=\"profilePic[^\"]*\">[^<]+<a href=\"http://www%.formspring%.me/([^\"]+)") do
+      for result_id, user in string.gmatch(data["_output"], "<li[^>]+id=\"([0-9]+)\">[^<]+<div class=\"profilePic[^\"]*\">[^<]+<a href=\"http://www%.formspring%.me/([a-zA-Z0-9]+)\"") do
         last_result_id = result_id
         if not usernames[user] then
           usernames[user] = true
