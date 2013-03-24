@@ -99,7 +99,7 @@ class PrepareDirectories(SimpleTask):
 
     item["item_dir"] = dirname
     item["warc_file_base"] = "%s-%s-%s" % (self.warc_prefix, item_name, time.strftime("%Y%m%d-%H%M%S"))
-    item["user_data_txt"] = "%s/formspring-user-%s.txt" % (item["data_dir"], item_name)
+    item["user_data_txt"] = "%s/formspring-user-%s-%s.txt" % (item["data_dir"], item_name, time.strftime("%Y%m%d-%H%M%S"))
 
     open("%(item_dir)s/%(warc_file_base)s.warc.gz" % item, "w").close()
     open(item["user_data_txt"], "w").close()
