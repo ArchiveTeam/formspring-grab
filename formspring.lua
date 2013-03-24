@@ -92,6 +92,9 @@ local discover_formspring_urls = function(urls, usernames, username, html)
   for url in string.gmatch(html, "<img src=\"(http://[^\"]+)\"") do
     table.insert(urls, { url=url })
   end
+  for url in string.gmatch(html, "href=\"(http://files-cdn%.formspring%.me/[^\"]+)\"") do
+    table.insert(urls, { url=url })
+  end
 
   -- user link with hovercard
   local found_new_username = false
