@@ -143,6 +143,7 @@ project = Project(
 # The ID of the tracker for this warrior (used in URLs below).
 TRACKER_ID = "formspring"
 
+USER_AGENT = ItemInterpolation("%(user_agent)s")
 
 ###########################################################################
 # The pipeline.
