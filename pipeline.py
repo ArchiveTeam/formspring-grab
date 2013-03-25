@@ -60,7 +60,7 @@ USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533.20
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = "20130324.03"
+VERSION = "20130325.01"
 
 
 ###########################################################################
@@ -176,13 +176,14 @@ pipeline = Pipeline(
       "--no-check-certificate",
       "--output-document", ItemInterpolation("%(item_dir)s/wget.tmp"),
       "--truncate-output",
+      "--content-on-error",
       "-e", "robots=off",
       "--rotate-dns",
       "--page-requisites",
       "--span-hosts", 
       "--reject-regex", r"<%|\[",
       "--timeout", "60",
-      "--tries", "20",
+      "--tries", "30",
       "--waitretry", "5",
       "--lua-script", "formspring.lua",
       "--warc-file", ItemInterpolation("%(item_dir)s/%(warc_file_base)s"),
