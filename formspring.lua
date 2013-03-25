@@ -7,7 +7,15 @@ local load_json_file = function(file)
     local f = io.open(file)
     local data = f:read("*all")
     f:close()
-    return JSON:decode(data)
+    local err, obj = pcall(function(d) return JSON:decode(d) end, data)
+    if err == true then
+      -- no error
+      return obj
+    else
+      io.stdout:write("\nJSON response could not be decoded.\n")
+      io.stdout:flush()
+      return nil
+    end
   else
     return nil
   end
