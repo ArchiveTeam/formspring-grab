@@ -307,14 +307,16 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     local data = load_json_file(file)
     local found_new_username = false
 
-    -- each comment
-    for i, comment in ipairs(data["comments"]) do
-      if comment["user"] then
-        if not usernames[comment["user"]["username"]] then
-          usernames[comment["user"]["username"]] = true
-          found_new_username = true
+    if data["comments"] then
+      -- each comment
+      for i, comment in ipairs(data["comments"]) do
+        if comment["user"] then
+          if not usernames[comment["user"]["username"]] then
+            usernames[comment["user"]["username"]] = true
+            found_new_username = true
+          end
+          table.insert(urls, { url=comment["user"]["photo"] })
         end
-        table.insert(urls, { url=comment["user"]["photo"] })
       end
     end
 
