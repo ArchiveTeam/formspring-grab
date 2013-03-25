@@ -60,7 +60,7 @@ USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533.20
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = "20130325.02"
+VERSION = "20130325.03"
 
 
 ###########################################################################
@@ -119,6 +119,31 @@ class MoveFiles(SimpleTask):
               "%(data_dir)s/%(warc_file_base)s.warc.gz" % item)
 
     shutil.rmtree("%(item_dir)s" % item)
+
+
+
+class GetItemFromTracker(TrackerRequest):
+  def __init__(self, tracker_url, downloader, version = None):
+    TrackerRequest.__init__(self, "GetItemFromTracker", tracker_url, "request", may_be_canceled=True)
+    self.downloader = downloader
+    self.version = version
+
+  def data(self, item):
+    data = {"downloader": realize(self.downloader, item), "api_version": "2"}
+    if self.version:
+      data["version"] = realize(self.version, item)
+    return data
+
+  def process_body(self, body, item):
+    data = json.loads(body)
+    if "item_name" in data:
+      for (k,v) in data.iteritems():
+        item[k] = v
+      item.log_output("Received item '%s' from tracker\n" % item["item_name"])
+      self.complete_item(item)
+    else:
+      item.log_output("Tracker responded with empty response.\n")
+      self.schedule_retry(item)
 
 
 
