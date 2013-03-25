@@ -347,7 +347,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
 end
 
 wget.callbacks.httploop_result = function(url, err, http_stat)
-  if http_stat.len == 0 and url.host == "www.formspring.me" then
+  if http_stat.statcode == 200 and http_stat.len == 0 and url.host == "www.formspring.me" then
     -- try again
     io.stdout:write("\nReceived empy response. Waiting for 30 seconds to try again...\n")
     io.stdout:flush()
