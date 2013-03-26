@@ -355,9 +355,9 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     return wget.actions.CONTINUE
   elseif http_stat.statcode == 500 and url.host == "www.formspring.me" then
     -- try again
-    io.stdout:write("\nReceived error 500 response. Waiting for 5 seconds to try again...\n")
+    io.stdout:write("\nReceived error 500 response. Waiting for 30 seconds to try again...\n")
     io.stdout:flush()
-    os.execute("sleep 5")
+    os.execute("sleep 30")
     return wget.actions.CONTINUE
   else
     return wget.actions.NOTHING
