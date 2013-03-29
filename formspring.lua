@@ -166,7 +166,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     end
 
     -- another page?
-    if data and data["count"] >= 20 then
+    if data and data["count"] and data["count"] >= 20 then
       -- find final question ID
       local last_question_id = nil
       for question_id in string.gmatch(data["questions"], "<li class=\"question[^>]+rel=\"([0-9]+)\"") do
