@@ -29,6 +29,49 @@ from seesaw.externalprocess import *
 from seesaw.tracker import *
 from seesaw.util import find_executable
 
+
+#---------------------------------------
+# This is an updated version of test_executable.
+# This can be removed when all warriors have updated
+# the seesaw-kit. (Needs at least version 0.0.14.)
+#
+import subprocess
+
+def test_executable(name, version, path):
+  print "Looking for %s in %s" % (name, path)
+  try:
+    process = subprocess.Popen([path, "-V"], stdout=subprocess.PIPE)
+    result = process.communicate()[0]
+    if not process.returncode == 0:
+      print "%s: Returned code %d" % (path, process.returncode)
+      return False
+
+    if isinstance(version, basestring):
+      if not version in result:
+        print "%s: Incorrect %s version (want %s)." % (path, name, version)
+        return False
+    elif hasattr(version, "search"):
+      if not version.search(result):
+        print "%s: Incorrect %s version." % (path, name)
+        return False
+    elif hasattr(version, "__iter__"):
+      if not any((v in result) for v in version):
+        print "%s: Incorrect %s version (want %s)." % (path, name, str(version))
+        return False
+
+    print "Found usable %s in %s" % (name, path)
+    return True
+  except OSError as e:
+    print "%s:" % path, e
+    return False
+
+def find_executable(name, version, paths):
+  for path in paths:
+    if test_executable(name, version, path):
+      return path
+  return None
+#---------------------------------------
+
 ###########################################################################
 # Find a useful Wget+Lua executable.
 #
@@ -36,7 +79,8 @@ from seesaw.util import find_executable
 # 1. does not crash with --version, and
 # 2. prints the required version string
 WGET_LUA = find_executable("Wget+Lua",
-    "GNU Wget 1.14.lua.20130120-8476",
+    [ "GNU Wget 1.14.lua.20130120-8476",
+      "GNU Wget 1.14.lua.20130407-1f1d" ],
     [ "./wget-lua",
       "./wget-lua-warrior",
       "./wget-lua-local",
@@ -60,7 +104,7 @@ USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533.20
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = "20130329.01"
+VERSION = "20130410.01"
 
 
 ###########################################################################
