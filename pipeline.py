@@ -33,7 +33,7 @@ from seesaw.util import find_executable
 #---------------------------------------
 # This is an updated version of test_executable.
 # This can be removed when all warriors have updated
-# the seesaw-kit. (Needs at least version 0.0.14.)
+# the seesaw-kit. (Needs at least version 0.0.15.)
 #
 import subprocess
 
