@@ -80,7 +80,8 @@ def find_executable(name, version, paths):
 # 2. prints the required version string
 WGET_LUA = find_executable("Wget+Lua",
     [ "GNU Wget 1.14.lua.20130120-8476",
-      "GNU Wget 1.14.lua.20130407-1f1d" ],
+      "GNU Wget 1.14.lua.20130407-1f1d",
+      "GNU Wget 1.14.lua.20130427-92d2" ],
     [ "./wget-lua",
       "./wget-lua-warrior",
       "./wget-lua-local",
@@ -92,6 +93,7 @@ WGET_LUA = find_executable("Wget+Lua",
 if not WGET_LUA:
   raise Exception("No usable Wget+Lua found.")
 
+exit()
 
 ###########################################################################
 # The user agent for external requests.
@@ -104,7 +106,7 @@ USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533.20
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = "20130410.01"
+VERSION = "20130510.01"
 
 
 ###########################################################################
