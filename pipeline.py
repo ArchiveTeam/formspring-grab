@@ -93,8 +93,6 @@ WGET_LUA = find_executable("Wget+Lua",
 if not WGET_LUA:
   raise Exception("No usable Wget+Lua found.")
 
-exit()
-
 ###########################################################################
 # The user agent for external requests.
 #
@@ -106,7 +104,7 @@ USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533.20
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = "20130510.01"
+VERSION = "20130512.01"
 
 
 ###########################################################################
